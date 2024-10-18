@@ -24,5 +24,5 @@ class ApplicationExternalInterface(ABC):
 class ReservationsExternalInterface(ABC):
     
     @abstractmethod
-    def requestForReservation(id: str) -> Optional[DateTime]:
+    def requestForReservation(id: str) -> Optional[list]:
         pass

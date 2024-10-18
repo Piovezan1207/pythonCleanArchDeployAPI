@@ -14,15 +14,21 @@ class Application:
         
         reservationGateway = ReservationGateway(reservationExternal)
         applicationGateway = ApplicationGateway(applicationExternal)
+        
+        applicationAdapter = ApplicationAdapter()
     
         
         application = ApplicationUseCases.createApplication(applicationName)
         reservation = ReservationUseCases.createReservation(reservationId, application)
-        reservation = ReservationUseCases.getReservationFromApi(reservationGateway, reservation)
+        
+        try:
+            reservation = ReservationUseCases.getReservationFromApi(reservationGateway, reservation)
+        except Exception as e:
+            return applicationAdapter.jsonApplicationError(e)
+        
         reservation.application = ApplicationUseCases.instantiateApplication(applicationGateway, reservation.application)
         reservation = ApplicationUseCases.scheduleApplicationDeletion(applicationGateway, reservation)
         
-        applicationAdapter = ApplicationAdapter(reservation)
         
         return applicationAdapter.jsonApplicationCreated(application)
         
@@ -35,10 +41,12 @@ class Application:
         
         applicationGateway = ApplicationGateway(applicationExternal)
         
-        application = ApplicationUseCases.loadApplication(applicationId)
-        application = applicationGateway.delete(application)
+        application = ApplicationUseCases.loadApplication(applicationId, applicationGateway)
+        status = ApplicationUseCases.deleteApplication(applicationGateway, application) 
         
         applicationAdapter = ApplicationAdapter()
         
-        return applicationAdapter.jsonApplicationDeleted(application)
-    
+        if status:
+            return applicationAdapter.jsonApplicationDeleted(application)
+        else:
+            return applicationAdapter.jsonApplicationError("Erro ao deletar a aplicação de ID {}".format(application.id))

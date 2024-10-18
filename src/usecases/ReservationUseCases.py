@@ -11,9 +11,10 @@ class ReservationUseCases:
     
     @staticmethod
     def getReservationFromApi(reservationGateway: ReservationGatewayInterface, reservation: Reservation) -> Optional[DateTime]:
-        reservationApiEndTime = reservationGateway.getReservationfromApi(reservation.id)
-        if reservationApiEndTime == None: raise Exception("Houve um problema ao tentar conseguir o a reserva da API.")
+        response = reservationGateway.getReservationfromApi(reservation.id)
+        if response[1] == False: raise Exception(response[0])
         # finalHour = DateTime(reservationApiEndTime) #Essa responsabilidade foi passada para o gateway
         # print(reservationApiEndTime.value)
+        reservationApiEndTime = response[0]
         reservation.finalHour = reservationApiEndTime
         return reservation

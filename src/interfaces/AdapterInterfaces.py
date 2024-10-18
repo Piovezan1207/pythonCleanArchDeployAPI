@@ -11,4 +11,8 @@ class ApplicationAdapterInterfaces(ABC):
     def jsonApplicationDeleted() -> Optional[dict]:
         pass
     
+    @abstractmethod
+    def jsonApplicationError() -> Optional[dict]:
+        pass
+    
     

@@ -14,12 +14,14 @@ def createNodered():
     nodeRedAzure = NoderedAzure()
     gacReservations = GacReservations()
     response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+    print(response)
     return jsonify(response)
 
-@app.route('/nodered', methods=['DELETE'])
+@app.route('/nodered/delete', methods=['GET'])
 def deleteNodered():
     applicationId = request.args["id"]
-    response = Application.delete(applicationId, NoderedAzure)
+    nodeRedAzure = NoderedAzure()
+    response = Application.delete(applicationId, nodeRedAzure)
     return jsonify(response)
 
 # Executa a aplicação

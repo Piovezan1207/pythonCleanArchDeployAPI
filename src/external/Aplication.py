@@ -8,21 +8,25 @@ from azure.identity import ClientSecretCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.web import WebSiteManagementClient
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class NoderedAzure(ApplicationExternalInterface):
     def __init__(self):
-       self.azureTenantId = None
-       self.azureClientId = None
-       self.azureClientSecret = None
-       self.azureSubscriptionId = None
-       self.azureResourceGroupName = None
-       self.azureAppServicePanName = None
-       self.azureLocation = None
-       
+       self.azureTenantId = os.getenv("AZURE_TENANT_ID")
+       self.azureClientId = os.getenv("AZURE_CLIENT_ID")
+       self.azureClientSecret = os.getenv("AZURE_CLIENT_SECRET")
+       self.azureSubscriptionId = os.getenv("AZURE_SUBSCRIPTION_ID")
+       self.azureResourceGroupName = os.getenv("AZURE_RESOURCE_GROUP_NAME")
+       self.azureAppServicePlanName= os.getenv("AZURE_APP_SERVICE_PLAN_NAME")
+       self.azureLocation = os.getenv("AZURE_LOCATION")
        
 
     def requestCloudDeploy(self, applicationId: str) -> Optional[str]:
         
-        return "www.nodered.hubsenai.com"
+        # return "www.nodered.hubsenai.com"
         
         credential = ClientSecretCredential(self.azureTenantId, 
                                             self.azureClientId, 
@@ -34,14 +38,22 @@ class NoderedAzure(ApplicationExternalInterface):
         
         azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
         
-        azureAppServicePlanId = "/subscriptions/730334bd-73f4-46b7-b300-83ddf84eb4c5/resourceGroups/resourceGroupNoderedCiber2/providers/Microsoft.Web/serverfarms/PlanAppServiceNoderedCiber2"
+        azureAppServicePlan = azureWebClient.app_service_plans.begin_create_or_update(
+            self.azureResourceGroupName,
+            self.azureAppServicePlanName,
+            {
+                "location": self.azureLocation,
+                "sku": {"name": "B1", "size": "10", "family": "B", "capacity": 1},
+                "reserved": True  # Para Linux, defina como True
+            }
+        ).result()
         
         azureAppService = azureWebClient.web_apps.begin_create_or_update(
             self.azureResourceGroupName,
             azureAppServiceName,
             {
                 "location": self.azureLocation,
-                "server_farm_id": azureAppServicePlanId, #app_service_plan.id,
+                "server_farm_id": azureAppServicePlan.id, #app_service_plan.id,
                 "site_config": {
                     "linux_fx_version": f"DOCKER|{noderedDockerImage}"
                 },

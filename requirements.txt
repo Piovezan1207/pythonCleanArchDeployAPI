@@ -5,3 +5,4 @@ pip install urllib3==1.26.6
 pip install --upgrade azure-mgmt-resource
 pip install azure-identity
 pip install azure-mgmt-web
+pip install python-dotenv

@@ -15,3 +15,11 @@ class ApplicationAdapter(ApplicationAdapterInterfaces):
         value = {"Deleted" : application.id}
         
         return value
+    
+    def jsonApplicationError(self, message):
+        value = {"status" : "Error",
+                 "message" : str(message) }
+        
+        return value
+    
+    
