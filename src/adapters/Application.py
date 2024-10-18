@@ -2,7 +2,7 @@ from ..interfaces.AdapterInterfaces import ApplicationAdapterInterfaces
 from ..entities.Application import Application
 
 class ApplicationAdapter(ApplicationAdapterInterfaces):
-    def __init__(self, application: Application):
+    def __init__(self):
         pass
     
     def jsonApplicationCreated(self, application: Application):

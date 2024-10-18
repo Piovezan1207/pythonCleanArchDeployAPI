@@ -1,5 +1,6 @@
 from ..interfaces.ExternalInterfaces import ApplicationExternalInterface
 from ..entities.DateTime import DateTime
+from ..entities.Application import Application
 
 from typing import List, Optional
 
@@ -7,7 +8,7 @@ from azure.identity import ClientSecretCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.web import WebSiteManagementClient
 
-class NoderedAzureDeploy(ApplicationExternalInterface):
+class NoderedAzure(ApplicationExternalInterface):
     def __init__(self):
        self.azureTenantId = None
        self.azureClientId = None
@@ -20,6 +21,8 @@ class NoderedAzureDeploy(ApplicationExternalInterface):
        
 
     def requestCloudDeploy(self, applicationId: str) -> Optional[str]:
+        
+        return "www.nodered.hubsenai.com"
         
         credential = ClientSecretCredential(self.azureTenantId, 
                                             self.azureClientId, 
@@ -55,10 +58,29 @@ class NoderedAzureDeploy(ApplicationExternalInterface):
         
     
     def requestCloudDelete(self, applicationId: str) -> Optional[bool]:
-        pass
+        credential = ClientSecretCredential(self.azureTenantId, 
+                                            self.azureClientId, 
+                                            self.azureClientSecret)
+        
+        azureAppServiceName = "nodered-{}".format(applicationId)
+        
+        azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
+        
+        try:
+            delete_operation = azureWebClient.web_apps.delete(
+                self.azureResourceGroupName,
+                azureAppServiceName
+            )
+            
+            return True
+        
+        except:
+            return None
     
     def scheduleRequest(self, id: str, datetime: DateTime) -> Optional[DateTime]:
-        pass
+        #IMPLEMENTAR!!
+        return datetime 
     
     def getAPplicationById(self, applicationId: str) -> None:
-        pass
+        #IMPLEMENTAR!!
+        return   Application("", applicationId, "")

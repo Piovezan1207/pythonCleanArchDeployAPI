@@ -9,6 +9,7 @@ class ReservationGateway(ReservationGatewayInterface):
         self.reservationsExternal = reservationsExternal
 
     def getReservationfromApi(self, id: str) -> Optional[DateTime]: 
-        date = self.reservationsExternal.requestForReservation()
+        date = self.reservationsExternal.requestForReservation(id)
         if date == None: raise Exception("Houve um erro em se comunicar com a API da reserva.")
         return date
+    

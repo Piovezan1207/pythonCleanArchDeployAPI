@@ -4,5 +4,11 @@ from typing import List, Optional
 class ApplicationAdapterInterfaces(ABC):
     
     @abstractmethod
-    def jsonApplication() -> Optional[dict]:
+    def jsonApplicationCreated() -> Optional[dict]:
         pass
+    
+    @abstractmethod
+    def jsonApplicationDeleted() -> Optional[dict]:
+        pass
+    
+    

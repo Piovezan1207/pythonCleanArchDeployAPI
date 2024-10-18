@@ -14,6 +14,7 @@ class Application:
         
         reservationGateway = ReservationGateway(reservationExternal)
         applicationGateway = ApplicationGateway(applicationExternal)
+    
         
         application = ApplicationUseCases.createApplication(applicationName)
         reservation = ReservationUseCases.createReservation(reservationId, application)
@@ -21,7 +22,7 @@ class Application:
         reservation.application = ApplicationUseCases.instantiateApplication(applicationGateway, reservation.application)
         reservation = ApplicationUseCases.scheduleApplicationDeletion(applicationGateway, reservation)
         
-        applicationAdapter = ApplicationAdapter()
+        applicationAdapter = ApplicationAdapter(reservation)
         
         return applicationAdapter.jsonApplicationCreated(application)
         

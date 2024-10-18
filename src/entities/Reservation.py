@@ -1,5 +1,5 @@
-from DateTime import DateTime
-from Application import Application
+from .DateTime import DateTime
+from .Application import Application
 
 class Reservation:
     def __init__(self, id: str, application: Application, finalHour: DateTime):
@@ -18,6 +18,14 @@ class Reservation:
     def application(self) -> Application:
         return self._application
     
+    @application.setter
+    def application(self, application: Application):
+        self._application = application
+    
     @property
     def finalHour(self) -> DateTime:
-        return self.finalHour
+        return self._finalHour
+    
+    @finalHour.setter
+    def finalHour(self, finalHour: DateTime):
+        self._finalHour = finalHour

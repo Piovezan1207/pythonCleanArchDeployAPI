@@ -17,9 +17,7 @@ class ApplicationUseCases:
     
     @staticmethod
     def loadApplication(applicationId: str, applicationGateway: ApplicationGatewayInterface):
-        application = applicationGateway.getAPplicationById(applicationId) #NÃO IMPLEMENTADO
-        
-        application = Application("", applicationId, "")
+        application = applicationGateway.getApplicationById(applicationId) #NÃO IMPLEMENTADO
         return application
     
     @staticmethod

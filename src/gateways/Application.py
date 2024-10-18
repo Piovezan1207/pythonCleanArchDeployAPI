@@ -26,4 +26,4 @@ class ApplicationGateway(ApplicationGatewayInterface):
         return status
     
     def getApplicationById(self, applicationId: str) -> Optional[Application]:
-        self.applicationExternal
+        return self.applicationExternal.getAPplicationById(applicationId)
