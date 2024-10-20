@@ -20,11 +20,8 @@ class Application:
         
         application = ApplicationUseCases.createApplication(applicationName)
         reservation = ReservationUseCases.createReservation(reservationId, application)
-        
-        try:
-            reservation = ReservationUseCases.getReservationFromApi(reservationGateway, reservation)
-        except Exception as e:
-            return applicationAdapter.jsonApplicationError(e)
+
+        reservation = ReservationUseCases.getReservationFromApi(reservationGateway, reservation)
         
         reservation.application = ApplicationUseCases.instantiateApplication(applicationGateway, reservation.application)
         reservation = ApplicationUseCases.scheduleApplicationDeletion(applicationGateway, reservation)

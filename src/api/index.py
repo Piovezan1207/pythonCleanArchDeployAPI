@@ -1,6 +1,7 @@
 from ..controllers.Application import Application
 from ..external.Aplication import NoderedAzure
 from ..external.Reservation import GacReservations
+from ..errors.ApiError import ApiError
 
 from flask import Flask, jsonify, request
 
@@ -13,8 +14,20 @@ def createNodered():
 
     nodeRedAzure = NoderedAzure()
     gacReservations = GacReservations()
-    response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
-    print(response)
+
+    # response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+    # print(response)
+    try:
+        response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+        print(response)
+    except ApiError as e:
+        return jsonify( value = {"status" : "Error",
+                        "message" : str(e) })
+    except Exception as e:
+        print(e)
+        return jsonify( value = {"status" : "Error",
+                        "message" : "Internal server error" }), 500
+
     return jsonify(response)
 
 @app.route('/nodered/delete', methods=['GET'])

@@ -1,5 +1,6 @@
 from ..interfaces.ExternalInterfaces import ReservationsExternalInterface
 from ..entities.DateTime import DateTime
+from ..errors.ApiError import ApiError
 
 import json
 import requests
@@ -20,19 +21,24 @@ class GacReservations(ReservationsExternalInterface):
         parameter = "{}".format(id)
         url = "{}/{}".format(self.gacUrl, parameter)
         
-        r = requests.get(url, timeout=2)
-        
-        if r.status_code != 200: return None #raise Exception("Houve um erro ao requisitar a reserva na gac.")
-        
-        print(r.content)
-        
         try:
-            response = r.content["final_time"], True
+            r = requests.get(url, timeout=2)
         except:
-            try:
-                response = r.content["messagem"], False
-            except:
-                return None
-            
+            raise Exception("Erro ao consultar o agendamento no sistema.")
+
+        # if r.status_code != 200: return None #raise Exception("Houve um erro ao requisitar a reserva na gac.")
+        
+
+        value = json.loads(r.content)
+        print(value["messagem"])
+
+        
+        if "final_time" in value:
+            response = value["final_time"]
+        elif "messagem" in value:
+            response = value["messagem"]
+            raise ApiError(response)
+        else:
+            return None
             
         return response 

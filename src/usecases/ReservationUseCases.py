@@ -12,9 +12,9 @@ class ReservationUseCases:
     @staticmethod
     def getReservationFromApi(reservationGateway: ReservationGatewayInterface, reservation: Reservation) -> Optional[DateTime]:
         response = reservationGateway.getReservationfromApi(reservation.id)
-        if response[1] == False: raise Exception(response[0])
+        # if response == None: raise Exception(response[0])
         # finalHour = DateTime(reservationApiEndTime) #Essa responsabilidade foi passada para o gateway
         # print(reservationApiEndTime.value)
-        reservationApiEndTime = response[0]
+        reservationApiEndTime = response
         reservation.finalHour = reservationApiEndTime
         return reservation
