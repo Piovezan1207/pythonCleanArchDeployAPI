@@ -1,8 +1,6 @@
-python -m pip install --upgrade pip
-
-pip install flask
-pip install urllib3==1.26.6
-pip install --upgrade azure-mgmt-resource
-pip install azure-identity
-pip install azure-mgmt-web
-pip install python-dotenv
+flask==3.0.3
+urllib3==1.26.6
+azure-mgmt-resource==23.1.1
+azure-identity==1.19.0
+azure-mgmt-web==7.3.1
+python-dotenv==1.0.1
