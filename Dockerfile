@@ -15,4 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Garantir que o atd seja iniciado ao rodar o container
 # O 'tail -f /dev/null' mantém o container rodando indefinidamente
-CMD service atd start && gunicorn -w 5 --timeout 180 -b 0.0.0.0:5000 main:app && tail -f /dev/null
+# CMD service atd start && gunicorn -w 5 --timeout 180 -b 0.0.0.0:5000 main:app && tail -f /dev/null
+CMD service atd start &&  python main.py && tail -f /dev/null

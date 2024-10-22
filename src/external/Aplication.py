@@ -10,6 +10,7 @@ from azure.mgmt.web import WebSiteManagementClient
 
 import os
 import subprocess
+import random
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -120,7 +121,7 @@ class NoderedAzure(ApplicationExternalInterface):
     def scheduleRequest(self, id: str, dateTime: DateTime) -> Optional[DateTime]:
         #IMPLEMENTAR!!
         
-        adicionalTimeToCallSchedule = 1 
+        adicionalTimeToCallSchedule = 5 + random.randint(1, 10)
         
         newDateTime = dateTime.value + timedelta(minutes=adicionalTimeToCallSchedule)
         
