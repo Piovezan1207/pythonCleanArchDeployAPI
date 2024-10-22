@@ -4,3 +4,5 @@ azure-mgmt-resource==23.1.1
 azure-identity==1.19.0
 azure-mgmt-web==7.3.1
 python-dotenv==1.0.1
+gunicorn==23.0.0
+Flask-Cors==5.0.0

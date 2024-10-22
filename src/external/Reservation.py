@@ -30,7 +30,7 @@ class GacReservations(ReservationsExternalInterface):
         
 
         value = json.loads(r.content)
-        print(value["messagem"])
+        print("Valor requisição" , value)
 
         
         if "final_time" in value:

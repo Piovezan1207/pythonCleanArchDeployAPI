@@ -9,6 +9,8 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.web import WebSiteManagementClient
 
 import os
+import subprocess
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -38,9 +40,26 @@ class NoderedAzure(ApplicationExternalInterface):
         
         azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
         
+        azureAppServicePlanNew = "plan-nodered-{}".format(applicationId)
+        
+        azureResourceClient = ResourceManagementClient(credential, self.azureSubscriptionId)
+        
+        # azureResourceGroupName = "{}-{}".format(self.azureResourceGroupName, applicationId)
+        
+        print("Criando serviço nodered:\n Grupo de recursos: {}\n Nome app service:{}\n Plano de recursos: {}".format(
+            self.azureResourceGroupName,
+            azureAppServiceName,
+            azureAppServicePlanNew))
+        
+        azureResourceClient.resource_groups.create_or_update(
+            self.azureResourceGroupName,
+            {'location': self.azureLocation}
+        )
+        
         azureAppServicePlan = azureWebClient.app_service_plans.begin_create_or_update(
             self.azureResourceGroupName,
-            self.azureAppServicePlanName,
+            # self.azureAppServicePlanName,
+            azureAppServicePlanNew,
             {
                 "location": self.azureLocation,
                 "sku": {"name": "B1", "size": "10", "family": "B", "capacity": 1},
@@ -66,6 +85,8 @@ class NoderedAzure(ApplicationExternalInterface):
             }
         ).result()
         
+        print("{} criado com sucesso.".format(azureAppServiceName))
+        
         return azureAppService.default_host_name
         
     
@@ -76,22 +97,45 @@ class NoderedAzure(ApplicationExternalInterface):
         
         azureAppServiceName = "nodered-{}".format(applicationId)
         
-        azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
         
+        azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
+        # azureResourceGroupName = "{}-{}".format(self.azureResourceGroupName, applicationId)
+        
+        
+        print("Excluindo serviço nodered:\n Grupo de recursos: {}\n Nome app service:{}".format(
+            self.azureResourceGroupName,
+            azureAppServiceName))
+  
         try:
             delete_operation = azureWebClient.web_apps.delete(
                 self.azureResourceGroupName,
                 azureAppServiceName
             )
-            
+            print("{} excluido com sucesso.".format(azureAppServiceName))
             return True
         
-        except:
-            return None
+        except Exception as e:
+            raise Exception(e)
     
-    def scheduleRequest(self, id: str, datetime: DateTime) -> Optional[DateTime]:
+    def scheduleRequest(self, id: str, dateTime: DateTime) -> Optional[DateTime]:
         #IMPLEMENTAR!!
-        return datetime 
+        
+        adicionalTimeToCallSchedule = 1 
+        
+        newDateTime = dateTime.value + timedelta(minutes=adicionalTimeToCallSchedule)
+        
+        now = datetime.now().astimezone()
+        tempInMinutsToCallSchedule =  int((newDateTime - now).total_seconds()/60)
+        
+        appUrl = os.getenv("APP_URL")
+        requestToDeleteUrl = "{}/nodered/delete?id={}".format(appUrl, id)
+        command = "echo \"curl -X GET {}\" | at now + {} minutes".format(requestToDeleteUrl, tempInMinutsToCallSchedule)
+        
+        os.system(command)
+        
+        print(command)
+        
+        return DateTime(newDateTime.strftime("%Y-%m-%dT%H:%M:%S.%f%z")) 
     
     def getAPplicationById(self, applicationId: str) -> None:
         #IMPLEMENTAR!!

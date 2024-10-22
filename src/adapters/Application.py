@@ -6,7 +6,7 @@ class ApplicationAdapter(ApplicationAdapterInterfaces):
         pass
     
     def jsonApplicationCreated(self, application: Application):
-        value = {"url" : application.url,
+        value = {"url" : "https://{}".format(application.url),
                  "tempToFinish" : application.scheduledForDeletionInMinuts}
         
         return value

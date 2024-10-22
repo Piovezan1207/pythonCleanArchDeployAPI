@@ -16,9 +16,9 @@ class ApplicationGateway(ApplicationGatewayInterface):
         return applicationUrl
         
     def scheduleDeletion(self, reservation: Reservation) -> Optional[DateTime]: 
-        dateTiem = self.applicationExternal.scheduleRequest(reservation.application.id, reservation.finalHour)
-        if dateTiem == None: raise Exception("Houve um erro ao tentar agendar o delete da aplicação.")
-        return dateTiem
+        dateTime = self.applicationExternal.scheduleRequest(reservation.application.id, reservation.finalHour)
+        if dateTime == None: raise Exception("Houve um erro ao tentar agendar o delete da aplicação.")
+        return dateTime
     
     def delete(self, application: Application) -> Optional[bool]:
         status = self.applicationExternal.requestCloudDelete(application.id)

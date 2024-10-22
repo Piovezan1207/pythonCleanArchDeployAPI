@@ -5,12 +5,19 @@ from ..errors.ApiError import ApiError
 
 from flask import Flask, jsonify, request
 
+
 # Cria a aplicação Flask
 app = Flask(__name__)
 
 @app.route('/nodered', methods=['GET'])
 def createNodered():
     reservationId = request.args["id"]
+    
+    
+    # value = {"url" : "www.nodered.hubsenai.com",
+    #              "tempToFinish" : 15}
+    
+    # return jsonify(value)
 
     nodeRedAzure = NoderedAzure()
     gacReservations = GacReservations()
@@ -24,7 +31,7 @@ def createNodered():
         return jsonify( value = {"status" : "Error",
                         "message" : str(e) })
     except Exception as e:
-        print(e)
+        print("Error" , e)
         return jsonify( value = {"status" : "Error",
                         "message" : "Internal server error" }), 500
 
