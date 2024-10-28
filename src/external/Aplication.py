@@ -101,18 +101,25 @@ class NoderedAzure(ApplicationExternalInterface):
         
         azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
         # azureResourceGroupName = "{}-{}".format(self.azureResourceGroupName, applicationId)
-        
+        azureAppServicePlanNew = "plan-nodered-{}".format(applicationId)
         
         print("Excluindo serviço nodered:\n Grupo de recursos: {}\n Nome app service:{}".format(
             self.azureResourceGroupName,
             azureAppServiceName))
   
         try:
-            delete_operation = azureWebClient.web_apps.delete(
+            web_app_delete_operation = azureWebClient.web_apps.delete(
                 self.azureResourceGroupName,
                 azureAppServiceName
             )
-            print("{} excluido com sucesso.".format(azureAppServiceName))
+            
+            app_service_plan_delete_operation = azureWebClient.app_service_plans.delete(
+                self.azureResourceGroupName,
+                azureAppServicePlanNew
+                
+            )
+            
+            print("{} e {} excluido com sucesso.".format(azureAppServiceName, azureAppServicePlanNew))
             return True
         
         except Exception as e:
