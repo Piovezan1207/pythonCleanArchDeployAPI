@@ -1,7 +1,7 @@
 from ..interfaces.AdapterInterfaces import ApplicationAdapterInterfaces
 from ..entities.Application import Application
 
-class ApplicationAdapter(ApplicationAdapterInterfaces):
+class ApplicationAdapterImp(ApplicationAdapterInterfaces):
     def __init__(self):
         pass
     

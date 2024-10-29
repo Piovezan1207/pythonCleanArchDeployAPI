@@ -4,7 +4,7 @@ from ..entities.DateTime import DateTime
 
 from typing import List, Optional
 
-class ReservationGateway(ReservationGatewayInterface):
+class ReservationGatewayImp(ReservationGatewayInterface):
     def __init__(self, reservationsExternal: ReservationsExternalInterface):
         self.reservationsExternal = reservationsExternal
 

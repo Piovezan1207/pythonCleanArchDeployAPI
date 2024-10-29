@@ -1,21 +1,21 @@
 from ..usecases.ReservationUseCases import ReservationUseCases
 from ..usecases.ApplicationUseCases import ApplicationUseCases
-from ..gateways.Reservation import ReservationGateway
-from ..gateways.Application import ApplicationGateway
+from ..gateways.ReservationGateway import ReservationGatewayImp
+from ..gateways.ApplicationGateway import ApplicationGatewayImp
 from ..interfaces.ExternalInterfaces import ApplicationExternalInterface, ReservationsExternalInterface
-from ..adapters.Application import ApplicationAdapter
+from ..adapters.ApplicationPresenter import ApplicationAdapterImp
 
-class Application:
+class ApplicationController:
     @staticmethod
     def instantiate(reservationId: str, 
                     applicationName: str,
                     applicationExternal: ApplicationExternalInterface, 
                     reservationExternal: ReservationsExternalInterface):
         
-        reservationGateway = ReservationGateway(reservationExternal)
-        applicationGateway = ApplicationGateway(applicationExternal)
+        reservationGateway = ReservationGatewayImp(reservationExternal)
+        applicationGateway = ApplicationGatewayImp(applicationExternal)
         
-        applicationAdapter = ApplicationAdapter()
+        applicationAdapter = ApplicationAdapterImp()
     
         
         application = ApplicationUseCases.createApplication(applicationName)
@@ -36,12 +36,12 @@ class Application:
     def delete(applicationId: str,
                applicationExternal: ApplicationExternalInterface):
         
-        applicationGateway = ApplicationGateway(applicationExternal)
+        applicationGateway = ApplicationGatewayImp(applicationExternal)
         
         application = ApplicationUseCases.loadApplication(applicationId, applicationGateway)
         status = ApplicationUseCases.deleteApplication(applicationGateway, application) 
         
-        applicationAdapter = ApplicationAdapter()
+        applicationAdapter = ApplicationAdapterImp()
         
         if status:
             return applicationAdapter.jsonApplicationDeleted(application)

@@ -1,17 +1,17 @@
-from ..controllers.Application import Application
-from ..external.Aplication import NoderedAzure
-from ..external.Reservation import GacReservations
+from ..controllers.ApplicationController import ApplicationController
+from ..external.AplicationExternal import NoderedAzure
+from ..external.ReservationExternal import GacReservations
 from ..errors.ApiError import ApiError
 
 from flask import Flask, jsonify, request
 
 from queue import Queue
 # Instância única da fila
-task_queue = Queue()
+task_queue_delete = Queue()
 
 # Função auxiliar para adicionar tarefas
 def add_task(func, *args, **kwargs):
-    task_queue.put({'func': func, 'args': args, 'kwargs': kwargs})
+    task_queue_delete.put({'func': func, 'args': args, 'kwargs': kwargs})
 
 # Cria a aplicação Flask
 app = Flask(__name__)
@@ -33,7 +33,7 @@ def createNodered():
     # response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
     # print(response)
     try:
-        response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+        response = ApplicationController.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
         print(response)
     except ApiError as e:
         return jsonify( value = {"status" : "Error",
@@ -50,7 +50,7 @@ def deleteNodered():
     applicationId = request.args["id"]
     nodeRedAzure = NoderedAzure()
     
-    add_task(Application.delete, applicationId, nodeRedAzure)
+    add_task(ApplicationController.delete, applicationId, nodeRedAzure)
     
     # response = Application.delete(applicationId, nodeRedAzure)
     

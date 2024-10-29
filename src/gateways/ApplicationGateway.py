@@ -6,7 +6,7 @@ from ..entities.DateTime import DateTime
 
 from typing import List, Optional
 
-class ApplicationGateway(ApplicationGatewayInterface):
+class ApplicationGatewayImp(ApplicationGatewayInterface):
     def __init__(self, applicationExternal: ApplicationExternalInterface):
         self.applicationExternal = applicationExternal
     

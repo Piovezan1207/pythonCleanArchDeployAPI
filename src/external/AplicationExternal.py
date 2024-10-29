@@ -14,7 +14,15 @@ import random
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+from queue import Queue
+# Instância única da fila
+task_queue_deploy = Queue()
+
 load_dotenv()
+
+# Função auxiliar para adicionar tarefas
+def add_task(func, *args, **kwargs):
+    task_queue_deploy.put({'func': func, 'args': args, 'kwargs': kwargs})
 
 class NoderedAzure(ApplicationExternalInterface):
     def __init__(self):
@@ -30,65 +38,16 @@ class NoderedAzure(ApplicationExternalInterface):
     def requestCloudDeploy(self, applicationId: str) -> Optional[str]:
         
         # return "www.nodered.hubsenai.com"
-        
-        credential = ClientSecretCredential(self.azureTenantId, 
-                                            self.azureClientId, 
-                                            self.azureClientSecret)
+        #
         
         azureAppServiceName = "nodered-{}".format(applicationId)
-        noderedDockerImage = "piovezan1207/nodered-dashboard:v1.0.0"
-        dockerRegistryServerUrl = "https://index.docker.io"
+        url = "{}.azurewebsites.net".format(azureAppServiceName)
         
-        azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
+        add_task(self.deployNodered, applicationId)
         
-        azureAppServicePlanNew = "plan-nodered-{}".format(applicationId)
-        
-        azureResourceClient = ResourceManagementClient(credential, self.azureSubscriptionId)
-        
-        # azureResourceGroupName = "{}-{}".format(self.azureResourceGroupName, applicationId)
-        
-        print("Criando serviço nodered:\n Grupo de recursos: {}\n Nome app service:{}\n Plano de recursos: {}".format(
-            self.azureResourceGroupName,
-            azureAppServiceName,
-            azureAppServicePlanNew))
-        
-        azureResourceClient.resource_groups.create_or_update(
-            self.azureResourceGroupName,
-            {'location': self.azureLocation}
-        )
-        
-        azureAppServicePlan = azureWebClient.app_service_plans.begin_create_or_update(
-            self.azureResourceGroupName,
-            # self.azureAppServicePlanName,
-            azureAppServicePlanNew,
-            {
-                "location": self.azureLocation,
-                "sku": {"name": "B1", "size": "10", "family": "B", "capacity": 1},
-                "reserved": True  # Para Linux, defina como True
-            }
-        ).result()
-        
-        azureAppService = azureWebClient.web_apps.begin_create_or_update(
-            self.azureResourceGroupName,
-            azureAppServiceName,
-            {
-                "location": self.azureLocation,
-                "server_farm_id": azureAppServicePlan.id, #app_service_plan.id,
-                "site_config": {
-                    "linux_fx_version": f"DOCKER|{noderedDockerImage}"
-                },
-                "app_settings": [
-                    {
-                        "name": "DOCKER_REGISTRY_SERVER_URL",
-                        "value": dockerRegistryServerUrl,
-                    }
-                ]
-            }
-        ).result()
-        
-        print("{} criado com sucesso.".format(azureAppServiceName))
-        
-        return azureAppService.default_host_name
+        return url
+    
+    
         
     
     def requestCloudDelete(self, applicationId: str) -> Optional[bool]:
@@ -148,3 +107,73 @@ class NoderedAzure(ApplicationExternalInterface):
     def getAPplicationById(self, applicationId: str) -> None:
         #IMPLEMENTAR!!
         return   Application("", applicationId, "")
+    
+    def deployNodered(self, applicationId: str) -> Optional[str]:
+        
+        # return "www.nodered.hubsenai.com"
+        #
+        
+        azureAppServiceName = "nodered-{}".format(applicationId)
+        url = "{}.azurewebsites.net".format(azureAppServiceName)
+        
+        credential = ClientSecretCredential(self.azureTenantId, 
+                                            self.azureClientId, 
+                                            self.azureClientSecret)
+        
+        azureAppServiceName = "nodered-{}".format(applicationId)
+        
+        url = "{}.azurewebsites.net".format(azureAppServiceName)
+        
+        noderedDockerImage = "piovezan1207/nodered-dashboard:v1.0.0"
+        dockerRegistryServerUrl = "https://index.docker.io"
+        
+        azureWebClient = WebSiteManagementClient(credential, self.azureSubscriptionId)
+        
+        azureAppServicePlanNew = "plan-nodered-{}".format(applicationId)
+        
+        azureResourceClient = ResourceManagementClient(credential, self.azureSubscriptionId)
+        
+        # azureResourceGroupName = "{}-{}".format(self.azureResourceGroupName, applicationId)
+        
+        print("Criando serviço nodered:\n Grupo de recursos: {}\n Nome app service:{}\n Plano de recursos: {}".format(
+            self.azureResourceGroupName,
+            azureAppServiceName,
+            azureAppServicePlanNew))
+        
+        azureResourceClient.resource_groups.create_or_update(
+            self.azureResourceGroupName,
+            {'location': self.azureLocation}
+        )
+        
+        azureAppServicePlan = azureWebClient.app_service_plans.begin_create_or_update(
+            self.azureResourceGroupName,
+            # self.azureAppServicePlanName,
+            azureAppServicePlanNew,
+            {
+                "location": self.azureLocation,
+                "sku": {"name": "B1", "size": "10", "family": "B", "capacity": 1},
+                "reserved": True  # Para Linux, defina como True
+            }
+        ).result()
+        
+        azureAppService = azureWebClient.web_apps.begin_create_or_update(
+            self.azureResourceGroupName,
+            azureAppServiceName,
+            {
+                "location": self.azureLocation,
+                "server_farm_id": azureAppServicePlan.id, #app_service_plan.id,
+                "site_config": {
+                    "linux_fx_version": f"DOCKER|{noderedDockerImage}"
+                },
+                "app_settings": [
+                    {
+                        "name": "DOCKER_REGISTRY_SERVER_URL",
+                        "value": dockerRegistryServerUrl,
+                    }
+                ]
+            }
+        ).result()
+        
+        print("{} criado com sucesso.".format(azureAppServiceName))
+        
+        return azureAppService.default_host_name
