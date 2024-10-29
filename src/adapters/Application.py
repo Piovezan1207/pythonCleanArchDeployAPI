@@ -12,7 +12,7 @@ class ApplicationAdapter(ApplicationAdapterInterfaces):
         return value
     
     def jsonApplicationDeleted(self, application: Application):
-        value = {"Deleted" : application.id}
+        value = {"deleted" : application.id}
         
         return value
     

@@ -128,7 +128,7 @@ class NoderedAzure(ApplicationExternalInterface):
     def scheduleRequest(self, id: str, dateTime: DateTime) -> Optional[DateTime]:
         #IMPLEMENTAR!!
         
-        adicionalTimeToCallSchedule = 5 + random.randint(1, 10)
+        adicionalTimeToCallSchedule = 5 #+ random.randint(1, 10)
         
         newDateTime = dateTime.value + timedelta(minutes=adicionalTimeToCallSchedule)
         

@@ -5,14 +5,22 @@ from ..errors.ApiError import ApiError
 
 from flask import Flask, jsonify, request
 
+from queue import Queue
+# Instância única da fila
+task_queue = Queue()
+
+# Função auxiliar para adicionar tarefas
+def add_task(func, *args, **kwargs):
+    task_queue.put({'func': func, 'args': args, 'kwargs': kwargs})
 
 # Cria a aplicação Flask
 app = Flask(__name__)
 
 @app.route('/nodered', methods=['GET'])
 def createNodered():
-    reservationId = request.args["id"]
     
+    
+    reservationId = request.args["id"]
     
     # value = {"url" : "www.nodered.hubsenai.com",
     #              "tempToFinish" : 15}
@@ -41,7 +49,15 @@ def createNodered():
 def deleteNodered():
     applicationId = request.args["id"]
     nodeRedAzure = NoderedAzure()
-    response = Application.delete(applicationId, nodeRedAzure)
+    
+    add_task(Application.delete, applicationId, nodeRedAzure)
+    
+    # response = Application.delete(applicationId, nodeRedAzure)
+    
+    response = {
+        "delete" : "{} adicionado a fila para ser removido.".format(applicationId)
+    }
+    
     return jsonify(response)
 
 # Executa a aplicação
