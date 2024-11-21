@@ -7,8 +7,6 @@ from threading import Thread
 
 import time
 
-
-
 def deleteWorker():
     while True:
         task = task_queue_delete.get()
@@ -39,6 +37,6 @@ def deployWorker():
 if __name__ == '__main__':
     # Inicia a thread do worker
     Thread(target=deleteWorker, daemon=True).start()
-    Thread(target=deployWorker, daemon=True).start()
+    # Thread(target=deployWorker, daemon=True).start() #Descomentar para fila de deploys
     CORS(app)
     app.run(debug=True, host='0.0.0.0', port=5000)

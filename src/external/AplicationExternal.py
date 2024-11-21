@@ -40,17 +40,28 @@ class NoderedAzure(ApplicationExternalInterface):
         # return "www.nodered.hubsenai.com"
         #
         
-        azureAppServiceName = "nodered-{}".format(applicationId)
-        url = "{}.azurewebsites.net".format(azureAppServiceName)
+        """
+        IMPLEMENTAR FILA PARA DEPLOY:
+        """
+        # azureAppServiceName = "nodered-{}".format(applicationId)
+        # url = "{}.azurewebsites.net".format(azureAppServiceName)
+        # add_task(self.deployNodered, applicationId)
         
-        add_task(self.deployNodered, applicationId)
+        """
+        IMPLEMENTAR DEPLOY DIRETO:
+        """
+        url = self.deployNodered(applicationId)
+        
+        #------------------------
         
         return url
     
     
         
     
-    def requestCloudDelete(self, applicationId: str) -> Optional[bool]:
+    def requestCloudDelete(self, applicationId: str) -> Optional[bool]:        
+        # return "deletado"
+        
         credential = ClientSecretCredential(self.azureTenantId, 
                                             self.azureClientId, 
                                             self.azureClientSecret)
@@ -114,15 +125,12 @@ class NoderedAzure(ApplicationExternalInterface):
         #
         
         azureAppServiceName = "nodered-{}".format(applicationId)
-        url = "{}.azurewebsites.net".format(azureAppServiceName)
         
         credential = ClientSecretCredential(self.azureTenantId, 
                                             self.azureClientId, 
                                             self.azureClientSecret)
         
         azureAppServiceName = "nodered-{}".format(applicationId)
-        
-        url = "{}.azurewebsites.net".format(azureAppServiceName)
         
         noderedDockerImage = "piovezan1207/nodered-dashboard:v1.0.0"
         dockerRegistryServerUrl = "https://index.docker.io"

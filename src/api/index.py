@@ -13,6 +13,16 @@ task_queue_delete = Queue()
 def add_task(func, *args, **kwargs):
     task_queue_delete.put({'func': func, 'args': args, 'kwargs': kwargs})
 
+import logging
+logging.basicConfig(
+    filename="app.log",
+    encoding="utf-8",
+    filemode="a",
+    format="{asctime} - {levelname} - {message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M",
+ )
+
 # Cria a aplicação Flask
 app = Flask(__name__)
 
@@ -30,15 +40,18 @@ def createNodered():
     nodeRedAzure = NoderedAzure()
     gacReservations = GacReservations()
 
-    # response = Application.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+    # response = ApplicationController.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
     # print(response)
     try:
         response = ApplicationController.instantiate(reservationId, "Nodered", nodeRedAzure, gacReservations)
+        logging.info(response)
         print(response)
     except ApiError as e:
+        logging.error("Erro" , exc_info=True)
         return jsonify( value = {"status" : "Error",
                         "message" : str(e) })
     except Exception as e:
+        logging.error("Erro" , exc_info=True)
         print("Error" , e)
         return jsonify( value = {"status" : "Error",
                         "message" : "Internal server error" }), 500

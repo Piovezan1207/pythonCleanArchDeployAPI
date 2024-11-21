@@ -20,13 +20,15 @@ class GacReservations(ReservationsExternalInterface):
         
         parameter = "{}".format(id)
         url = "{}/{}".format(self.gacUrl, parameter)
+        print(url)
         
         try:
             r = requests.get(url, timeout=2)
         except:
             raise Exception("Erro ao consultar o agendamento no sistema.")
 
-        # if r.status_code != 200: return None #raise Exception("Houve um erro ao requisitar a reserva na gac.")
+        if r.status_code == 401 : raise ApiError(r.content)
+        elif r.status_code != 200 : return None #raise Exception("Houve um erro ao requisitar a reserva na gac.")
         
 
         value = json.loads(r.content)
